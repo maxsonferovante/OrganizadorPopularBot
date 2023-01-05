@@ -1,6 +1,8 @@
 from tkinter import *
 from  tkinter import ttk
 
+from tkinter.messagebox import showinfo
+
 from unicodedata import name
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -23,11 +25,15 @@ def dbReadListContats():
 
 ws  = Tk()
 ws.title('Python Bot Send')
-ws.geometry('600x800+800+100')
-ws['bg'] = '#AC99F2'
+ws.geometry('1200x800+400+100')
+
 
 game_frame = Frame(ws)
 game_frame.pack()
+
+
+#labels
+
 
 #scrollbar
 game_scroll = Scrollbar(game_frame)
@@ -37,6 +43,7 @@ game_scroll = Scrollbar(game_frame,orient='horizontal')
 game_scroll.pack(side= BOTTOM,fill=X)
 
 my_game = ttk.Treeview(game_frame,yscrollcommand=game_scroll.set, xscrollcommand =game_scroll.set)
+
 
 
 my_game.pack()
@@ -50,8 +57,8 @@ my_game['columns'] = ('id', 'nome', 'contato')
 
 # format our column
 my_game.column("#0", width=0,  stretch=NO)
-my_game.column("id",anchor=CENTER, width=80)
-my_game.column("nome",anchor=CENTER,width=140)
+my_game.column("id",anchor=CENTER, width=140)
+my_game.column("nome",anchor=CENTER,width=200)
 my_game.column("contato",anchor=CENTER,width=140)
 
 
@@ -72,6 +79,7 @@ for contats_index in contats.index:
 
 my_game.pack()
 
+
 frame = Frame(ws)
 frame.pack(pady=40, padx=40)
 
@@ -82,7 +90,7 @@ messageLabel.grid(row=0,column=0 )
 
 #Entry boxes
 messagemText_entry = Text(frame)
-messagemText_entry.grid(row=1,column=1)
+messagemText_entry.grid(row=1,column=0)
 
 msg = open("mensagem.txt", encoding="utf8")
 message = msg.read()
@@ -149,6 +157,8 @@ def update_record():
 #Buttons
 select_button = Button(ws,text="Enviar Cobrança", command=send_msg)
 select_button.pack(pady =10)
+
+
 
 """ 
 refresh_button = Button(ws,text="Refresh Record",command=update_record)
