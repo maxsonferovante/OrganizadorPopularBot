@@ -38,6 +38,7 @@ def Format_Numb (lf):
 
 # Obter dados do excel
 def Criar_lista_contatos ():
+    print(os.getcwd())
     lista_contatos = Format_Numb(pd.read_excel("base.xlsx"))
     return lista_contatos
 

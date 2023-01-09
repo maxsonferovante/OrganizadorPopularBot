@@ -1,20 +1,15 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from tkinter import *
 from  tkinter import ttk
 
-from tkinter.messagebox import showinfo
-
-from unicodedata import name
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from urllib.parse import quote
-from re import fullmatch
-
-from bot_msg import botSendMensage, dbReadListContats
-
 import time
 import dateBase as dB
-import setBrowser as sB
 
+import os 
+from alright import WhatsApp
+from datetime import datetime
 
 ## SCRIPT ##
 """
@@ -25,7 +20,7 @@ def dbReadListContats():
 
 ws  = Tk()
 ws.title('Python Bot Send')
-ws.geometry('1200x800+400+100')
+ws.geometry('550x900+400+50')
 
 
 game_frame = Frame(ws)
@@ -42,14 +37,13 @@ game_scroll.pack(side=RIGHT, fill=Y)
 game_scroll = Scrollbar(game_frame,orient='horizontal')
 game_scroll.pack(side= BOTTOM,fill=X)
 
-my_game = ttk.Treeview(game_frame,yscrollcommand=game_scroll.set, xscrollcommand =game_scroll.set)
+my_game = ttk.Treeview(game_frame,yscrollcommand=game_scroll.set)
 
 
 
 my_game.pack()
 
 game_scroll.config(command=my_game.yview)
-game_scroll.config(command=my_game.xview)
 
 #define our column
  
@@ -84,8 +78,9 @@ frame = Frame(ws)
 frame.pack(pady=40, padx=40)
 
 #labels
-messageLabel = Label(frame,text = "Mensagem")
+messageLabel = Label(frame,text = "Mensagem Padrão")
 messageLabel.grid(row=0,column=0 )
+
 
 
 #Entry boxes
@@ -96,10 +91,64 @@ msg = open("mensagem.txt", encoding="utf8")
 message = msg.read()
 messagemText_entry.insert(END,message)
 
+
+bar = Frame (ws)
+bar.pack()
+
+
+pb = ttk.Progressbar(bar, orient="horizontal", mode="indeterminate", length=280)
+pb.grid(column=0,row=1,columnspan=2,padx=10,pady=20)
+
+
+
 #Enviando mensagens aos filiados
 def send_msg():
     list_contats = dB.Criar_lista_contatos()
-    # Loads browser
+
+    messager = WhatsApp()
+
+    print (list_contats)
+    
+    pb.start()
+
+    for i in list_contats.index:
+        time.sleep(1)
+        
+        phone_no = list_contats.at[i,"Contato"]
+        name_interesed = list_contats.at[i,"Nome"]
+
+        
+        print (phone_no, name_interesed)
+        
+        time.sleep(2)
+
+        messager.find_user(phone_no)
+
+        
+        data_e_hora_em_texto = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+
+        print(data_e_hora_em_texto)
+
+        messager.send_message(
+            "*{}* \n *_Olá, {}_'* \n {}".format(
+                data_e_hora_em_texto,
+                name_interesed,
+                message)
+                )
+        
+        time.sleep(2)
+
+        
+        os.chdir(r"C:\Users\maxso\Documents\Contabilidade Unidade Popular\Municipal\Pagamentos")
+        print (os.getcwd())
+        for i in os.listdir("."):
+            messager.send_file(os.path.abspath(i))
+            time.sleep(5)
+    pb.stop()
+   
+    
+    """  # Loads browser
+    
     driver = sB.set_browser(sB.browser)
     
 
@@ -129,39 +178,10 @@ def send_msg():
                 time.sleep(5)        
                 
     # Closes windows
-    driver.close()
-    
-    """ 
-    #grab record
-    selected=my_game.focus()
-    #grab record values
-    values = my_game.item(selected,'values')
-    #temp_label.config(text=selected)
-"""
-"""   #output to entry boxes
-    playerid_entry.insert(0,values[0])
-    playername_entry.insert(0,values[1])
-    playerrank_entry.insert(0,values[2]) """
+    driver.close() """
 
-""" #save Record
-def update_record():
-    selected=my_game.focus()
-    #save new data 
-    my_game.item(selected,text="",values=(playerid_entry.get(),playername_entry.get(),playerrank_entry.get()))
-    
-   #clear entry boxes
-    playerid_entry.delete(0,END)
-    playername_entry.delete(0,END)
-    playerrank_entry.delete(0,END)
- """
 #Buttons
 select_button = Button(ws,text="Enviar Cobrança", command=send_msg)
 select_button.pack(pady =10)
-
-
-
-""" 
-refresh_button = Button(ws,text="Refresh Record",command=update_record)
-refresh_button.pack(pady = 10) """
 
 ws.mainloop()
